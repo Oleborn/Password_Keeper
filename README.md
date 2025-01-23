@@ -41,7 +41,7 @@
 
 ### Предварительные требования
 
-- Установите [Java JDK 21 Azul Zulu 21.0.5]
+- Установите [Java JDK 21 Azul Zulu](https://www.azul.com/downloads/#zulu)
 - Установите [Maven](https://maven.apache.org/download.cgi)
 
 ### Установка
