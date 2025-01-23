@@ -40,7 +40,7 @@ public class ReadFileImpl implements ReadFile {
     }
 
     @Override
-    public DataInFile parsing(AuthUser authUser) {
+    public void parsing(AuthUser authUser) {
         try {
             // Читаем зашифрованные данные из файла
             byte[] encryptedBytes = Files.readAllBytes(Paths.get(UtilsEnum.FILEPATH.getString().formatted(authUser.getName())));
@@ -49,10 +49,8 @@ public class ReadFileImpl implements ReadFile {
             String decryptedData = encodingService.decrypt(encryptedData,
                     encodingService.generateKeyFromPassword(authUser.getUserKey())
             );
-            // Десериализуем JSON-строку в объект DataInFile
-            return objectMapper.readValue(decryptedData, DataInFile.class);
         } catch (Exception e) {
-            throw new RuntimeException("Вы использовали неверный пароль", e);
+            throw new RuntimeException("Вы использовали неверный пароль");
         }
     }
 }

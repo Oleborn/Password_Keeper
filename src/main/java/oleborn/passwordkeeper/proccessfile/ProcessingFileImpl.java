@@ -40,8 +40,8 @@ public class ProcessingFileImpl implements ProcessingFile {
     }
 
     @Override
-    public DataInFile readFileNoSession(AuthUser authUser) {
-        return readFile.parsing(authUser);
+    public void readFileNoSession(AuthUser authUser) {
+        readFile.parsing(authUser);
     }
 
     @Override
@@ -51,6 +51,13 @@ public class ProcessingFileImpl implements ProcessingFile {
 
     @Override
     public void deleteFile(String name) {
+        // Формируем путь к файлу (уже включает имя файла и расширение)
+        Path filePath = Paths.get(FILEPATH.getString().formatted(name));
+        try {
+            Files.delete(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

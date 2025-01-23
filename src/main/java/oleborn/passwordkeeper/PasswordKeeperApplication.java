@@ -9,7 +9,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+/*
+Что добавим:
 
+ - очищение текстового поля со временем
+ - рассмотреть варианты удаления и редактирования логинов паролей
+ - сделать текст в консоли как будто программа его набирает а не мгновенно добавлять
+
+   ------------------------------------------------------------------
+ - после авторизации блокировать поля логин и пароль для ввода, до нажатия кнопки релог - сделано
+ - при релоге очищать все текстовые поля - сделано
+ - не давать вводить урл и тд в поля до авторизации - сделано
+ - сделать проверку на пустые поля через аннотации для всех полей - сделано
+ - запретить введение одинаковых данных, в урл - сделано
+
+ */
 @SpringBootApplication
 @EnableAspectJAutoProxy
 public class PasswordKeeperApplication extends Application {
@@ -37,12 +51,10 @@ public class PasswordKeeperApplication extends Application {
         stage.setResizable(false);
         stage.setScene(new Scene(root, 800, 510));
         stage.show();
-    }
-
-    @Override
-    public void stop() {
-        // Закрытие Spring-контекста при завершении приложения
-        springContext.close();
+        // Обработчик события закрытия окна
+        stage.setOnCloseRequest(event -> {
+            System.exit(0); // Завершение JVM
+        });
     }
 }
 

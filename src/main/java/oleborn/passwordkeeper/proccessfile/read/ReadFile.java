@@ -5,5 +5,5 @@ import oleborn.passwordkeeper.model.DataInFile;
 
 public interface ReadFile {
     DataInFile parsing();
-    DataInFile parsing(AuthUser authUser);
+    void parsing(AuthUser authUser);
 }

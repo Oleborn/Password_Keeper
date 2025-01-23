@@ -12,6 +12,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void authUser(AuthUser user) {
-        processingFile.readFileNoSession(user).getUserPassword();
+        processingFile.readFileNoSession(user);
     }
 }

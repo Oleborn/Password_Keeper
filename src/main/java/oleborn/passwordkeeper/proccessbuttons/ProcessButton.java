@@ -1,15 +1,21 @@
 package oleborn.passwordkeeper.proccessbuttons;
 
 import jakarta.annotation.Resource;
+import javafx.scene.control.Button;
+import oleborn.passwordkeeper.annotations.NotNullCustom;
 import oleborn.passwordkeeper.auth.AuthService;
 import oleborn.passwordkeeper.encoding.EncodingService;
-import oleborn.passwordkeeper.model.AuthUser;
-import oleborn.passwordkeeper.model.DataInFile;
-import oleborn.passwordkeeper.model.UserSession;
-import oleborn.passwordkeeper.model.UserWithRole;
+import oleborn.passwordkeeper.model.*;
 import oleborn.passwordkeeper.proccessfile.ProcessingFile;
 import oleborn.passwordkeeper.util.RoleAuth;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static oleborn.passwordkeeper.util.UtilsMethods.handleButton;
 
 /**
  * Класс, отвечающий за обработку действий, связанных с кнопкой входа (авторизации/регистрации).
@@ -31,18 +37,23 @@ public class ProcessButton {
     @Resource
     private EncodingService encodingService;
 
+    private boolean isDeleteConfirmed = false; // Флаг для отслеживания подтверждения
+
     /**
      * Обрабатывает действие нажатия кнопки входа.
      * Если файл пользователя уже существует, выполняется попытка авторизации.
      * Если файл отсутствует, создается новый аккаунт и сохраняется в файл.
      *
-     * @param authUser Объект {@link AuthUser}, содержащий имя пользователя и пароль.
      * @return Сообщение о результате операции:
-     *         - "Вы авторизованы и можете начать работу." — если авторизация прошла успешно.
-     *         - "Ваш пароль не верен." — если пароль не совпадает.
-     *         - "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc" — если аккаунт создан.
+     * - "Вы авторизованы и можете начать работу." — если авторизация прошла успешно.
+     * - "Ваш пароль не верен." — если пароль не совпадает.
+     * - "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc" — если аккаунт создан.
      */
-    public String processingButtonEnter(AuthUser authUser) {
+    public String processingButtonEnter(
+            @NotNullCustom String login,
+            @NotNullCustom String password
+    ) {
+        AuthUser authUser = new AuthUser(login, password);
         // Проверяем, существует ли файл
         boolean isFileExists = !processingFile.ensureDirectoryExists(authUser.getName());
 
@@ -58,8 +69,8 @@ public class ProcessButton {
      *
      * @param authUser Объект {@link AuthUser}, содержащий имя пользователя и пароль.
      * @return Сообщение о результате операции:
-     *         - "Вы авторизованы и можете начать работу." — если авторизация прошла успешно.
-     *         - "Ваш пароль не верен." — если пароль не совпадает.
+     * - "Вы авторизованы и можете начать работу." — если авторизация прошла успешно.
+     * - "Ваш пароль не верен." — если пароль не совпадает.
      */
     private String handleExistingUser(AuthUser authUser) {
         authService.authUser(authUser);
@@ -73,7 +84,7 @@ public class ProcessButton {
      *
      * @param authUser Объект {@link AuthUser}, содержащий имя пользователя и пароль.
      * @return Сообщение о результате операции:
-     *         - "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc".
+     * - "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc".
      */
     private String handleNewUser(AuthUser authUser) {
         setUserSession(authUser);
@@ -85,7 +96,7 @@ public class ProcessButton {
                         .build()
         );
 
-        return "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc".formatted(authUser.getName());
+        return "Ваш аккаунт создан и сохранен в файле по пути C:/ProgramData/PasswordKeeper/%s.enc, и вы можете начать работу".formatted(authUser.getName());
     }
 
     /**
@@ -102,6 +113,107 @@ public class ProcessButton {
                         RoleAuth.AUTHENTICATED
                 )
         );
+    }
+
+
+    public String processingButtonRelog() {
+        userSession.clearUser();
+        return "Вы вышли из своего аккаунта";
+    }
+
+    public void processingButtonExit() {
+        System.exit(0);
+    }
+
+    public String processingButtonAdded(
+            @NotNullCustom String url,
+            @NotNullCustom String login,
+            @NotNullCustom String password) {
+        UrlData urlData = new UrlData(url, login, password);
+        DataInFile dataInFile = processingFile.readFile(userSession.getUser().getName());
+        HashMap<String, Set<Credentials>> data = dataInFile.getData();
+
+        // Используем computeIfAbsent для добавления нового URL, если его нет
+        Set<Credentials> credentialsSet = data.computeIfAbsent(
+                urlData.getUrl(),
+                k -> new HashSet<>()
+        );
+
+        // Добавляем новые учетные данные (дубликаты будут автоматически исключены)
+        boolean add = credentialsSet.add(new Credentials(urlData.getLoginUrl(), urlData.getPasswordUrl()));
+
+        // Обновляем файл
+        processingFile.updateFile(dataInFile);
+
+        if (add) {
+            return """
+                    Вы успешно внесли новые данные.
+                    
+                    Адрес сайта:    %s
+                    Логин на сайте  %s
+                    Пароль:         %s
+                    """.formatted(
+                    urlData.getUrl(),
+                    urlData.getLoginUrl(),
+                    urlData.getPasswordUrl()
+            );
+        } else {
+            return """
+                    Логин и пароль которые Вы пытаетесь внести для url: %s, уже есть, добавление не удалось.
+                    """.formatted(
+                    urlData.getUrl()
+            );
+        }
+    }
+
+    public String processingButtonSearch(String url, String login, String password) {
+        DataInFile dataInFile = processingFile.readFile(userSession.getUser().getName());
+        HashMap<String, Set<Credentials>> data = dataInFile.getData();
+        StringBuilder result = new StringBuilder();
+
+        for (Map.Entry<String, Set<Credentials>> entry : data.entrySet()) {
+            String key = entry.getKey();
+            Set<Credentials> credentialsSet = entry.getValue();
+
+            // Проверка на соответствие URL, если он указан
+            if (url == null || url.isEmpty() || key.contains(url)) {
+                for (Credentials cred : credentialsSet) {
+                    // Проверка на соответствие логина и пароля, если они указаны
+                    if ((login == null || login.isEmpty() || cred.getLoginUrl().contains(login)) &&
+                            (password == null || password.isEmpty() || cred.getPasswordUrl().contains(password))) {
+                        result.append("URL: ").append(key).append("\n");
+                        result.append("Login: ").append(cred.getLoginUrl()).append("\n");
+                        result.append("Password: ").append(cred.getPasswordUrl()).append("\n");
+                        result.append("-------------------\n");
+                    }
+                }
+            }
+        }
+
+        if (result.isEmpty()) {
+            return "Увы, ничего из введенного вами не найдено.";
+        }
+
+        return result.toString();
+    }
+
+    public String processingButtonDelete(Button deleteButton) {
+        if (!isDeleteConfirmed) {
+            // Первое нажатие: выводим сообщение и устанавливаем флаг
+            isDeleteConfirmed = true;
+            return """
+                    Вы уверены?
+                    
+                    Повторное нажатие удалит ваш аккаунт безвозвратно.
+                    """;
+        } else {
+            // Второе нажатие: выполняем удаление и сбрасываем флаг
+            processingFile.deleteFile(userSession.getUser().getName());
+            userSession.clearUser();
+            isDeleteConfirmed = false; // Сбрасываем флаг
+            handleButton(deleteButton, true);
+            return "Вы удалили свой аккаунт.";
+        }
     }
 }
 

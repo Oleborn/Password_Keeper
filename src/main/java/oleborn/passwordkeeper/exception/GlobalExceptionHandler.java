@@ -17,5 +17,4 @@ public class GlobalExceptionHandler {
     public void handleException(RuntimeException ex) {
         mainController.appendToConsole(ex.getMessage());
     }
-
 }

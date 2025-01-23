@@ -1,28 +1,43 @@
 package oleborn.passwordkeeper.model;
 
+import java.util.Objects;
+
 public class Credentials {
-    private String login;
-    private String password;
+    private String loginUrl;
+    private String passwordUrl;
 
     public Credentials(String login, String password) {
-        this.login = login;
-        this.password = password;
+        this.loginUrl = login;
+        this.passwordUrl = password;
     }
 
-    public String getLogin() {
-        return login;
+    public Credentials() {}
+
+    public String getLoginUrl() {
+        return loginUrl;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordUrl() {
+        return passwordUrl;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordUrl(String passwordUrl) {
+        this.passwordUrl = passwordUrl;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Credentials that = (Credentials) o;
+        return Objects.equals(loginUrl, that.loginUrl) && Objects.equals(passwordUrl, that.passwordUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(loginUrl, passwordUrl);
+    }
 }

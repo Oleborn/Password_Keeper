@@ -2,11 +2,12 @@ package oleborn.passwordkeeper.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class DataInFile {
     private String username;
     private String userPassword;
-    private HashMap<String, List<Credentials>> data;
+    private HashMap<String, Set<Credentials>> data;
 
     // Приватный конструктор (используется только через Builder)
     private DataInFile() {}
@@ -20,7 +21,7 @@ public class DataInFile {
         return userPassword;
     }
 
-    public HashMap<String, List<Credentials>> getData() {
+    public HashMap<String, Set<Credentials>> getData() {
         return data;
     }
 
@@ -29,11 +30,23 @@ public class DataInFile {
         return new Builder();
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public void setData(HashMap<String, Set<Credentials>> data) {
+        this.data = data;
+    }
+
     // Внутренний класс Builder
     public static class Builder {
         private String username;
         private String userPassword;
-        private HashMap<String, List<Credentials>> data = new HashMap<>();
+        private HashMap<String, Set<Credentials>> data = new HashMap<>();
 
         // Методы для установки полей
         public Builder username(String username) {
@@ -46,12 +59,12 @@ public class DataInFile {
             return this;
         }
 
-        public Builder data(HashMap<String, List<Credentials>> data) {
+        public Builder data(HashMap<String, Set<Credentials>> data) {
             this.data = data;
             return this;
         }
 
-        public Builder addDataEntry(String key, List<Credentials> credentials) {
+        public Builder addDataEntry(String key, Set<Credentials> credentials) {
             this.data.put(key, credentials);
             return this;
         }

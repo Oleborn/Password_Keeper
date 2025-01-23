@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public interface ProcessingFile {
     void createFile(String name);
     DataInFile readFile(String name);
-    DataInFile readFileNoSession(AuthUser authUser);
+    void readFileNoSession(AuthUser authUser);
     void updateFile(DataInFile dataInFile);
     void deleteFile(String name);
     boolean ensureDirectoryExists(String name);

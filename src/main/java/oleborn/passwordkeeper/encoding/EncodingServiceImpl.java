@@ -70,7 +70,7 @@ public class EncodingServiceImpl implements EncodingService {
             result = new String(decryptedBytes);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Вы использовали неверный пароль");
         }
         return result;
     }
