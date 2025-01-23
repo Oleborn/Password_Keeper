@@ -1,14 +1,13 @@
 package oleborn.passwordkeeper.controllers;
 
 import jakarta.annotation.Resource;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import oleborn.passwordkeeper.proccessbuttons.ProcessButton;
+import oleborn.passwordkeeper.util.Messages;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -60,6 +59,7 @@ public class MainController {
 
         handleFields(List.of(urlField, loginUrlField, passwordUrlField), true);
         handleButtons(List.of(addedButton, searchButton, relogButton, deleteButton), true);
+        appendToConsole(Messages.START_MS.getMessage());
     }
 
 
@@ -104,7 +104,7 @@ public class MainController {
 
     // Метод для добавления текста в TextArea
     public void appendToConsole(String message) {
-        Text text = new Text(message+ "\n");
+        Text text = new Text(message + "\n");
         consoleArea.getChildren().add(text);
         //consoleArea.appendText(message + "\n"); // Добавляем текст и перенос строки
     }
