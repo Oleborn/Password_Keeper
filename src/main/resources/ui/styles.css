@@ -1,0 +1,48 @@
+/* Отключение выделения текста */
+.text-area {
+    -fx-background-color: transparent;
+    -fx-highlight-fill: #a5c6fc; /* Убирает цвет выделения */
+    -fx-highlight-text-fill: rgb(10, 10, 10); /* Цвет текста при выделении */
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Стиль для кнопки закрытия */
+#closeAppButton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-text-fill: black;
+}
+
+/* Стиль для кнопки сворачивания */
+#minimizeAppButton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-text-fill: black;
+}
+
+/* Скрываем вертикальную и горизонтальную полосы прокрутки */
+.text-area .scroll-pane {
+    -fx-hbar-policy: never; /* Отключаем горизонтальную полосу прокрутки */
+    -fx-vbar-policy: never; /* Отключаем вертикальную полосу прокрутки */
+}
+
+

@@ -2,6 +2,8 @@ package oleborn.passwordkeeper.proccessbuttons;
 
 import jakarta.annotation.Resource;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import oleborn.passwordkeeper.annotations.NotNullCustom;
 import oleborn.passwordkeeper.auth.AuthService;
 import oleborn.passwordkeeper.encoding.EncodingService;
@@ -10,10 +12,7 @@ import oleborn.passwordkeeper.proccessfile.ProcessingFile;
 import oleborn.passwordkeeper.util.RoleAuth;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static oleborn.passwordkeeper.util.UtilsMethods.handleButton;
 
@@ -159,7 +158,7 @@ public class ProcessButton {
             );
         } else {
             return """
-                    Логин и пароль которые Вы пытаетесь внести для url: %s, уже есть, добавление не удалось.
+                    Логин и пароль которые Вы пытаетесь внести для url %s, уже есть, добавление не удалось.
                     """.formatted(
                     urlData.getUrl()
             );
@@ -196,6 +195,64 @@ public class ProcessButton {
 
         return result.toString();
     }
+
+//    public List<HBox> processingButtonSearch(String url, String login, String password) {
+//        DataInFile dataInFile = processingFile.readFile(userSession.getUser().getName());
+//        HashMap<String, Set<Credentials>> data = dataInFile.getData();
+//
+//        List<HBox> hBoxes = new ArrayList<>();
+//
+//        for (Map.Entry<String, Set<Credentials>> entry : data.entrySet()) {
+//            String key = entry.getKey();
+//            Set<Credentials> credentialsSet = entry.getValue();
+//
+//            // Проверка на соответствие URL, если он указан
+//            if (url == null || url.isEmpty() || key.contains(url)) {
+//                for (Credentials cred : credentialsSet) {
+//                    // Проверка на соответствие логина и пароля, если они указаны
+//                    if ((login == null || login.isEmpty() || cred.getLoginUrl().contains(login)) &&
+//                            (password == null || password.isEmpty() || cred.getPasswordUrl().contains(password))) {
+//
+//                        // Формируем текст для отображения
+//                        String message =
+//                                "URL: " + key + " "+
+//                                "Login: " + cred.getLoginUrl() +" "+
+//                                "Password: " + cred.getPasswordUrl()+" ";
+//
+//                        // Создаем HBox для размещения текста и кнопок
+//                        HBox hbox = new HBox(5); // 5 - это отступ между элементами
+//
+//                        // Создаем текст
+//                        Text textNode = new Text(message);
+//
+//                        // Создаем кнопку редактирования
+//                        Button editButton = new Button("Редактировать");
+//                        editButton.setStyle("-fx-font-size: 8px;");
+//                        editButton.setOnAction(event -> {
+//                            System.out.println("Редактировать: " + message);
+//                            // Логика редактирования
+//                            // Например, открыть диалоговое окно для редактирования
+//                        });
+//
+//                        // Создаем кнопку удаления
+//                        Button deleteButton = new Button("Удалить");
+//                        deleteButton.setStyle("-fx-font-size: 8px;");
+//                        deleteButton.setOnAction(event -> {
+//
+//                            // Логика удаления
+//                            // Например, удалить запись из данных и обновить интерфейс
+//                        });
+//
+//                        // Добавляем текст и кнопки в HBox
+//                        hbox.getChildren().addAll(textNode, editButton, deleteButton);
+//
+//                        hBoxes.add(hbox);
+//                    }
+//                }
+//            }
+//        }
+//        return hBoxes;
+//    }
 
     public String processingButtonDelete(Button deleteButton) {
         if (!isDeleteConfirmed) {

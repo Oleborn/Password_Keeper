@@ -5,23 +5,29 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 /*
 Что добавим:
-
- - очищение текстового поля со временем
- - рассмотреть варианты удаления и редактирования логинов паролей
- - сделать текст в консоли как будто программа его набирает а не мгновенно добавлять
+    - Дать возможность копировать с панели
+    - узнать почему часть текста подвисает, текст как бы долго заменяется
+    - добавить механизм удаления и редактирования записей
+    - сделать текст в консоли как будто программа его набирает а не мгновенно добавлять
+    - добавить кнопку "зайти в браузер с данными"
 
    ------------------------------------------------------------------
+    - убрать общую рамку, добавив свои элементы управления - сделано
+   - изменить шрифты - сделано
+   - Очищать консоль после каждого сообщения - сделано
  - после авторизации блокировать поля логин и пароль для ввода, до нажатия кнопки релог - сделано
  - при релоге очищать все текстовые поля - сделано
  - не давать вводить урл и тд в поля до авторизации - сделано
  - сделать проверку на пустые поля через аннотации для всех полей - сделано
  - запретить введение одинаковых данных, в урл - сделано
+ - рассмотреть варианты удаления логинов паролей - сделано
 
  */
 @SpringBootApplication
@@ -47,9 +53,9 @@ public class PasswordKeeperApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Password Keeper");
         stage.setResizable(false);
         stage.setScene(new Scene(root, 800, 510));
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
         // Обработчик события закрытия окна
         stage.setOnCloseRequest(event -> {
